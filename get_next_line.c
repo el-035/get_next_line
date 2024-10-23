@@ -8,19 +8,20 @@ static char	*saveline(char *buffer)
 {
 	char	*temp;
 	size_t	len;
+	char	*nl;
 
 	len = 0;
-	if (*buffer == 0)
+	if (!buffer || *buffer == 0)
 		return (NULL);
-	buffer = ft_strchr(buffer, '\n') + 1;
-	while (buffer[len])
+	nl = ft_strchr(buffer, '\n') + 1;
+	while (nl[len])
 		len++;
 	temp = (char *) malloc((len + 1) * sizeof(char));
 	if (!temp)
 		return (free(temp), NULL);
 	temp[len] = '\0';
 	while (len-- > 0)
-		temp[len] = buffer[len];
+		temp[len] = nl[len];
 	return (temp);
 }
 char	*found_nl_temp(char **temp, char **line, char *buffer)
