@@ -6,6 +6,28 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+char	*ft_strdup(const char *s)
+{
+	size_t	i;
+	char	*str;
+	size_t	len;
+
+	i = 0;
+	len = 0;
+	while (s[len])
+		len++;
+	str = (char *) malloc((len + 1) * sizeof(char));
+	if (str == NULL)
+		return (NULL);
+	while (s[i])
+	{
+		str[i] = s[i];
+		i++;
+	}
+	str[i] = s[i];
+	return (str);
+}
+
 size_t	ft_linelen(const char *str)
 {
 	size_t	i;
@@ -63,10 +85,16 @@ char	*ft_strjoin(char *s1, char *s2)
 
 char	*free_join(char *s1, char *s2)
 {
-	char *res;
+	char	*res;
+	int		f;
 
+	f = 0;
+	if (s1)
+		f = 1;
 	res = ft_strjoin(s1, s2);
-	return (free (s1), res);
+	if (f == 1)
+		free (s1);
+	return (res);
 }
 
 void	*ft_calloc(size_t nmemb, size_t size)
@@ -86,7 +114,14 @@ void	*ft_calloc(size_t nmemb, size_t size)
 		mem[i++] = '\0';
 	return ((void *)mem);
 }
+void	ft_bzero(void *s, size_t n)
+{
+	unsigned char	*res;
 
+	res = s;
+	while (n-- > 0)
+		*res++ = '\0';
+}
 /* int main (void)
 {
 	char *line = NULL;
@@ -117,3 +152,4 @@ void	*ft_calloc(size_t nmemb, size_t size)
 	else
 		return ()
 } */
+

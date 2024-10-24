@@ -3,6 +3,7 @@
 #include <stdio.h> //
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 
 static char	*saveline(char *buffer)
 {
@@ -11,7 +12,7 @@ static char	*saveline(char *buffer)
 	char	*nl;
 
 	len = 0;
-	if (!buffer || *buffer == 0)
+	if (!buffer)
 		return (NULL);
 	nl = ft_strchr(buffer, '\n') + 1;
 	while (nl[len])
@@ -24,31 +25,33 @@ static char	*saveline(char *buffer)
 		temp[len] = nl[len];
 	return (temp);
 }
+
 char	*found_nl_temp(char **temp, char **line, char *buffer)
 {
 	char *temp_free;
 
-	temp_free = NULL; //here I changed
-	temp_free = saveline (*temp);
+	temp_free = NULL; 
+	temp_free = saveline (*temp); //here I changed
 	if (!temp_free)
 		return (free (buffer), free (line), NULL);
 	*line = free_join(*line, *temp);
 	if (!*line)
 		return (free(buffer), NULL);
-	*temp = free_join(*temp, temp_free);
+	free (*temp);
+	*temp = ft_strdup(temp_free);
 	free (temp_free);
 	if (!*temp)
 		return (free(*line), free (buffer), NULL);
 	return (free (buffer), *line);
 }
 
-char	*found_nl_buf(char **temp, char **line, char *buffer, int bytes)
+char	*helper(char **temp, char **line, char *buffer, int bytes)
 {
 	if (bytes == 0)
 	{
 		*line = free_join(*line, *temp);
 		if (!*line)
-				return (free(*line), NULL); //free buffer too
+				return (free(*line), NULL); //free buffer to
 		return (free (*temp), *temp = NULL, free (buffer), *line);
 	}
 	else
@@ -82,6 +85,7 @@ char	*get_next_line(int fd)
 		return (found_nl_temp(&temp, &line, buffer));
 	while (bytes != 0 && (!ft_strchr(buffer, '\n')))
 	{	
+		ft_bzero((void *)buffer, BUFFER_SIZE);
 		bytes = read(fd, buffer, BUFFER_SIZE);
 		if (bytes == -1)
 			return (free (buffer), NULL);
@@ -89,19 +93,19 @@ char	*get_next_line(int fd)
 			break ;
 		temp = free_join(temp, buffer);
 		if (!temp)
-			return (free(buffer), NULL);
+			return (NULL);
 	}
 	if (ft_strchr(buffer, '\n') || (bytes == 0 && temp))
-		return (found_nl_buf(&temp, &line, buffer, bytes));
+		return (helper(&temp, &line, buffer, bytes));
 	return (free (temp), temp = NULL, free (buffer), line);
 }
 
-int main()
+/*int main()
 {
     char    *line = "";
     int fd;
 
-    fd = open("nl.txt", O_RDONLY);
+    fd = open("alternate_line_nl_no_nl.txt", O_RDONLY);
 	line = get_next_line(fd);
 	printf("%s", line);
     while (line)
@@ -112,4 +116,4 @@ int main()
     }
     close(fd);
     return 0;
-}
+}*/

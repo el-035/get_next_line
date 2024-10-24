@@ -15,7 +15,7 @@
 #include <stdlib.h>
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 1
+#  define BUFFER_SIZE 42
 # endif
 
 char	*get_next_line(int fd);
@@ -24,5 +24,7 @@ char	*ft_strchr(const char *s, int c);
 char	*ft_strjoin(char *s1, char *s2);
 void	*ft_calloc(size_t nmemb, size_t size);
 char	*free_join(char *s1, char *s2);
+char	*ft_strdup(const char *s);
+void	ft_bzero(void *s, size_t n);
 
 #endif
