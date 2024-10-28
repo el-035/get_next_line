@@ -34,45 +34,28 @@ char    *ft_strjoin(char *s1, char *s2)
 	int     len1;
 	int     len2;
 	int		i;
+	char 	*ptr;
 
 	len1 = 0;
 	len2 = 0;
 	i = 0;
-	while (s1 != NULL && s1[len1])
+	ptr = s1;
+	while (ptr != NULL && ptr[len1])
 		len1++;
 	while (s2[len2])
 	    len2++;
-	join = (char *) malloc ((len1 + len2 + 1) * sizeof (char));
+	join = (char *)malloc((len1 + len2 + 1) * sizeof (char));
 	if (!join)
-		return (NULL);
-	while (s1 && len1-- > 0)
-		join[i++] = *s1++;
+		return ( free (s1), NULL);
+	while (ptr && len1-- > 0)
+		join[i++] = *ptr++;
 	while (len2-- > 0)
 		join[i++] = *s2++;
 	join[i] = '\0';
-	return (join);
+	return (free(s1), join);
 }
 
-char	*ft_linedup(char *s) //rename linedup
-{
-	int		i;
-	char	*str;
-	int		len;
-
-	i = -1;
-	len = 0;
-	while (s[len] && s[len] != '\n')
-		len++;
-	str = (char *) malloc((len + 2) * sizeof(char));
-	if (str == NULL)
-		return (NULL);
-	ft_bzero(str, (len + 2));
-	while (i++ < len)
-		str[i] = s[i];
-	return (str);
-}
-
-char	*ft_strdup(char *s) //rename linedup
+char	*ft_strdup(char *s)
 {
 	int		i;
 	char	*str;
@@ -93,19 +76,13 @@ char	*ft_strdup(char *s) //rename linedup
 	}
 	str[i] = s[i];
 	return (str);
-}
+} 
 
+// int main (void)
+// {
+// 	//char *beg = NULL;
+// 	char *end = "Nel mezzo del cammin di nostra vita \nmi ritrovai";
 
+// 	printf ("%s", current_line(end));
 
-/* int main (void)
-{
-	//char *beg = NULL;
-	char *end = "Nel mezzo del cammin di nostra vita \nmi ritrovai";
-
-	printf ("%s", ft_linedup(end));
-
-	beg = end;
-	end = "ezzo";
-
-	printf ("%s", ft_linedup(beg));
-} */
+// } */

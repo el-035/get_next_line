@@ -16,15 +16,15 @@
 #include <unistd.h>
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 42
+#  define BUFFER_SIZE 10
 # endif
 
 char	*get_next_line(int fd);
 //utils:
 char	*ft_strchr(char *s, int c);
 char	*ft_strjoin(char *s1, char *s2);
-char	*ft_strdup(char *s);
 void	ft_bzero(void *s, size_t n);
-char	*ft_linedup(char *s);
+char	*ft_strdup(char *s);
+
 
 #endif

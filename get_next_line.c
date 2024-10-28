@@ -2,7 +2,60 @@
 
 #include <stdio.h> //to be deleted
 #include <fcntl.h> //to be deleted
+#include <string.h>
 
+//step 1
+char	*read_content(int fd, char *temp)
+{
+	char		*buffer;
+	int			bytes;
+
+	bytes = 1;
+	buffer = (char *)malloc((BUFFER_SIZE + 1) * sizeof(char));
+	if (!buffer)
+		return (free(temp), NULL);
+	ft_bzero(buffer, (BUFFER_SIZE + 1));
+	while (bytes > 0 && !ft_strchr(buffer, '\n'))
+	{
+		bytes = read(fd, buffer, BUFFER_SIZE);
+		if (bytes == -1)
+			return (free(buffer), /* free(temp), */ NULL);
+		buffer[bytes] = '\0';
+		if (bytes == 0)
+			break;
+		temp = ft_strjoin(temp, buffer);
+		if (!temp)
+			return (free(buffer), NULL);
+	}
+	if(!temp || (temp && !*temp))
+		return(free(buffer), free(temp), NULL);
+	return (free(buffer), temp);
+}
+
+//step 2
+char	*current_line(char *temp)
+{
+	int		i;
+	char	*line;
+	int		len;
+
+	line = NULL;
+	i = -1;
+	len = 0;
+	while (temp[len] && temp[len] != '\n')
+		len++;
+	if (temp[len] == '\n')
+		len++;
+	line = (char *) malloc((len + 1) * sizeof(char));
+	if (!line)
+		return (NULL);
+	ft_bzero(line, (len + 1));
+	while (++i < len)
+		line[i] = temp[i];
+	return (line);
+}
+
+//step 3
 char	*saveline(char *str)
 {
 	char	*temp;
@@ -10,105 +63,63 @@ char	*saveline(char *str)
 	char	*nl;
 
 	len = 0;
-	if (!str)
-		return (NULL);
-	nl = ft_strchr(str, '\n') + 1;
+	nl = ft_strchr(str, '\n');
+	if (!nl)
+		return (free(str), ft_strdup(""));
+	nl++;
 	while (nl[len])
 		len++;
 	temp = (char *) malloc((len + 1) * sizeof(char));
 	if (!temp)
-		return (free(temp), NULL);
+		return (free(str), NULL);
 	temp[len] = '\0';
 	while (len-- > 0)
 		temp[len] = nl[len];
+	free (str);
 	return (temp);
 }
 
-char	*nl_temp(char *buffer, char **temp)
+char	*get_next_line(int fd) 
 {
-	char *free_temp;
+	static char	*temp = NULL;
+	char		*line;
 
-	free_temp = NULL;
-	buffer = ft_linedup(*temp); //until nl
-	if (!buffer)
-		return (NULL);
-	free_temp = saveline(*temp);//previous temp needs to be freed before reallocation
-	if (!free_temp)
-		return (NULL);
-	free(*temp);
-	*temp = ft_strdup(free_temp);
-	if (!*temp)
-		return (NULL);
-	return (free(free_temp), buffer); 
+	line = NULL;
+	if(fd < 0 || BUFFER_SIZE <= 0)
+		return NULL;
+	//step 1 read from file until a new line is found and return everything
+	temp = read_content(fd, temp);
+	if(!temp)
+		return NULL;
 	
-}
-char	*nl_buf(char *buffer, char **temp)
-{
-	char *free_temp;
+	//step 2 save everything until nl included
+	line = current_line(temp);
+	if(!line)
+		return (free(temp), NULL);
+	
+	//step 3 save what was after the newline
+	temp = saveline(temp);
+	if(!temp)
+		return (free(line), NULL);
 
-	free_temp = NULL;
-	free(*temp);
-	*temp = saveline(buffer);
-	if (!*temp)
-		return (NULL);
-	free_temp = ft_strdup (buffer);
-	free (buffer);
-	buffer = ft_linedup(free_temp);
-	if (!buffer)
-		return (NULL);
-	return (free (*temp), buffer);
+	//final step return the current line
+	return (line);
 }
 
-char *eof(char **temp)
+/* int main()
 {
-	char *buffer;
-
-	buffer = ft_strdup(*temp);
-	free(*temp);
-	*temp = NULL;
-	return (buffer);
-}
-char	*get_next_line(int fd)
-{
-	char		buffer[BUFFER_SIZE +1];
-	static char *temp = NULL;
-	int			bytes;
-
-	bytes = 1;
-	ft_bzero(buffer, (BUFFER_SIZE + 1));
-	while (bytes != 0 && !ft_strchr(buffer, '\n') && !ft_strchr(temp, '\n'))
-	{
-		ft_bzero(buffer, (BUFFER_SIZE + 1));
-		bytes = read(fd, buffer, BUFFER_SIZE);
-		if (bytes == -1)
-			return (NULL);
-		if (bytes == 0 && temp != NULL)
-			return(eof(&temp));
-		temp = ft_strjoin(temp, buffer);
-		if (!temp)
-			return (NULL);
-	}
-	if (ft_strchr(temp, '\n'))
-		return (nl_temp(buffer, &temp));
-	if (ft_strchr(buffer, '\n'))
-		return (nl_buf(buffer, &temp));
-	return (free(temp), temp = NULL, NULL);
-}
-
-int main()
-{
-    char    *line = "";
+    char    *line;
     int fd;
 
-    fd = open("divina_commedia.txt", O_RDONLY);
-	line = get_next_line(fd);
-	printf("%s", line);
-    while (line)
+    fd = open("test.txt", O_RDONLY);
+    while (1)
     {
-        free(line);
 		line = get_next_line(fd);
 		printf("%s", line);
+		if (!line)
+			return (close(fd), 0);
+		free(line);
     }
     close(fd);
     return 0;
-}
+}  */
