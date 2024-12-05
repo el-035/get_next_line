@@ -1,13 +1,33 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: efittant <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/10/30 15:14:32 by efittant          #+#    #+#             */
+/*   Updated: 2024/10/30 15:14:35 by efittant         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "get_next_line.h"
-#include <stdio.h> 
 
-void	ft_bzero(void *s, size_t n)
+void	*ft_calloc(size_t nmemb, size_t size)
 {
-	unsigned char	*res;
+	unsigned char	*mem;
+	size_t			temp;
+	size_t			i;
 
-	res = s;
-	while (n-- > 0)
-		*res++ = '\0';
+	i = 0;
+	temp = (nmemb * size);
+	if (nmemb != 0 && temp / nmemb != size)
+		return (NULL);
+	mem = malloc(nmemb * size);
+	if (mem == NULL)
+		return (NULL);
+	while (i < temp)
+		mem[i++] = '\0';
+	return ((void *)mem);
 }
 
 char	*ft_strchr(char *s, int c)
@@ -28,13 +48,13 @@ char	*ft_strchr(char *s, int c)
 	return (NULL);
 }
 
-char    *ft_strjoin(char *s1, char *s2)
+char	*ft_strjoin(char *s1, char *s2)
 {
-	char    *join;
-	int     len1;
-	int     len2;
+	char	*join;
+	int		len1;
+	int		len2;
 	int		i;
-	char 	*ptr;
+	char	*ptr;
 
 	len1 = 0;
 	len2 = 0;
@@ -43,16 +63,16 @@ char    *ft_strjoin(char *s1, char *s2)
 	while (ptr != NULL && ptr[len1])
 		len1++;
 	while (s2[len2])
-	    len2++;
+		len2++;
 	join = (char *)malloc((len1 + len2 + 1) * sizeof (char));
 	if (!join)
-		return ( free (s1), NULL);
+		return (free (s1), s1 = NULL, NULL);
 	while (ptr && len1-- > 0)
 		join[i++] = *ptr++;
 	while (len2-- > 0)
 		join[i++] = *s2++;
 	join[i] = '\0';
-	return (free(s1), join);
+	return (free(s1), s1 = NULL, join);
 }
 
 char	*ft_strdup(char *s)
@@ -65,10 +85,9 @@ char	*ft_strdup(char *s)
 	len = 0;
 	while (s[len])
 		len++;
-	str = (char *) malloc((len + 1) * sizeof(char));
+	str = (char *) ft_calloc((len + 1), sizeof(char));
 	if (str == NULL)
 		return (NULL);
-	ft_bzero(str, (len + 1));
 	while (s[i])
 	{
 		str[i] = s[i];
@@ -76,8 +95,9 @@ char	*ft_strdup(char *s)
 	}
 	str[i] = s[i];
 	return (str);
-} 
+}
 
+//#include <stdio.h>
 // int main (void)
 // {
 // 	//char *beg = NULL;
@@ -85,4 +105,4 @@ char	*ft_strdup(char *s)
 
 // 	printf ("%s", current_line(end));
 
-// } */
+// }
